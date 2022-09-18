@@ -1,89 +1,190 @@
-const { DataTypes } = require("sequelize");
+const { DataTypes, Sequelize } = require("sequelize");
 const sequelize = require("../sequelize");
 
-const user_infos = sequelize.define("user_infos", {
-  user_id: {
-    type: DataTypes.TEXT,
+const users = sequelize.define("users", {
+  id: {
+    type: DataTypes.INTEGER,
     primaryKey: true,
+    autoIncrement: true,
+    allowNull: false,
+  },
+  email_address: {
+    type: DataTypes.TEXT,
+    allowNull: false,
+    unique: true,
+  },
+  password: {
+    type: DataTypes.TEXT,
+    allowNull: false,
+  },
+  user_name: {
+    type: DataTypes.TEXT,
+    allowNull: false,
+  },
+});
+
+const viewing_apps = sequelize.define("viewing_apps", {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
     allowNull: false,
   },
   name: {
     type: DataTypes.TEXT,
     allowNull: false,
   },
-  mail_address: {
-    type: DataTypes.TEXT,
-    allowNull: false,
-  },
 });
 
-const personal_anime_infos = sequelize.define("personal_anime_infos", {
+const watched_anime = sequelize.define("watched_animes", {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true,
+    allowNull: false,
   },
   user_id: {
-    type: DataTypes.TEXT,
-    primaryKey: true,
-    // references: {
-    //   model: user_infos,
-    //   key: "user_id",
-    // },
-  },
-  title: {
-    type: DataTypes.TEXT,
-    allowNull: false,
-  },
-  sub_title: {
-    type: DataTypes.TEXT,
-    allowNull: false,
-  },
-  story_number: {
     type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: users,
+      key: "id",
+    },
+  },
+  anime_title_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  anime_sub_title_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  anime_sub_title_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  viewing_app_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: viewing_apps,
+      key: "id",
+    },
   },
   rating: {
-    type: DataTypes.DECIMAL,
+    type: DataTypes.INTEGER,
+    allowNull: false,
   },
-  viewing_app: {
+  comment: {
     type: DataTypes.TEXT,
+    allowNull: false,
   },
   date: {
     type: DataTypes.DATE,
+    allowNull: false,
+    defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
+  },
+});
+
+const tags = sequelize.define("tags", {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+    allowNull: false,
+  },
+  tag: {
+    type: DataTypes.TEXT,
     allowNull: false,
   },
 });
 
-const friend_infos = sequelize.define("friend_infos", {
+const anime_tags = sequelize.define("anime_tags", {
   id: {
-    primaryKey: true,
     type: DataTypes.INTEGER,
+    primaryKey: true,
     autoIncrement: true,
+    allowNull: false,
   },
+  anime_title_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  tage_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: tags,
+      key: "id",
+    },
+  },
+});
+
+const interested_animes = sequelize.define("interested_animes", {
   user_id: {
-    type: DataTypes.TEXT,
+    type: DataTypes.INTEGER,
+    primaryKey: true,
     allowNull: false,
-    references: {
-      model: user_infos,
-      key: "user_id",
-    },
   },
-  friend_id: {
-    type: DataTypes.TEXT,
+  anime_title_id: {
+    type: DataTypes.INTEGER,
     allowNull: false,
-    references: {
-      model: user_infos,
-      key: "user_id",
-    },
+  },
+});
+
+const friends = sequelize.define("friends", {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+    allowNull: false,
+  },
+  sender_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  recipient_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  status: {
+    type: DataTypes.CHAR(11),
+    allowNull: false,
+  },
+});
+
+const messages = sequelize.define("messages", {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+    allowNull: false,
+  },
+  sender_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  recipient_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  message: {
+    type: DataTypes.CHAR(11),
+    allowNull: false,
   },
   date: {
-    type: DataTypes.DATE,
+    type: DataTypes.CHAR(11),
     allowNull: false,
   },
 });
 
 module.exports = {
-  user_infos,
-  personal_anime_infos,
-  friend_infos,
+  users,
+  viewing_apps,
+  watched_anime,
+  tags,
+  anime_tags,
+  interested_animes,
+  friends,
+  messages,
 };
